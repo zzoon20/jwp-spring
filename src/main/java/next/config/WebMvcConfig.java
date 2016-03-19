@@ -44,7 +44,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         // Static ressources from both WEB-INF and webjars
         registry
             .addResourceHandler("/resources/**")
-                .addResourceLocations("/resources/")
+                .addResourceLocations("/WEB-INF/static_resources/")
                 .setCachePeriod(CACHE_PERIOD);
     }
 

@@ -33,9 +33,10 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
                 .addResourceLocations("/WEB-INF/static_resources/")
                 .setCachePeriod(CACHE_PERIOD);
     }
-
+    
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        // Serving static files using the Servlet container's default Servlet.
         configurer.enable();
-    }
+    }    
 }

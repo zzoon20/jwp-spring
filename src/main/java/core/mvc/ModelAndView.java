@@ -1,4 +1,4 @@
-package core.web.view;
+package core.mvc;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ public class ModelAndView {
 	
 	public ModelAndView() {
 	}
-	
+
 	public ModelAndView(View view) {
 		this.view = view;
 	}

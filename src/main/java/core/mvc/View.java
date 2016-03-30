@@ -1,4 +1,4 @@
-package core.web.view;
+package core.mvc;
 
 import java.util.Map;
 

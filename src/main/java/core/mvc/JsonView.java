@@ -1,4 +1,4 @@
-package core.web.view;
+package core.mvc;
 
 import java.io.PrintWriter;
 import java.util.Map;

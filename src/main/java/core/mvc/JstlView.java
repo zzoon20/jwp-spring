@@ -1,4 +1,4 @@
-package core.web.view;
+package core.mvc;
 
 import java.util.Map;
 import java.util.Set;
@@ -7,12 +7,12 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class JspView implements View {
+public class JstlView implements View {
 	private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
 	
 	private String viewName;
 
-	public JspView(String viewName) {
+	public JstlView(String viewName) {
 		if (viewName == null) {
 			throw new NullPointerException("viewName is null. 이동할 URL을 입력하세요.");
 		}

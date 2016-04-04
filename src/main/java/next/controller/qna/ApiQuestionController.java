@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import next.CannotDeleteException;
+import next.CannotOperateException;
 import next.controller.UserSessionUtils;
 import next.dao.AnswerDao;
 import next.dao.QuestionDao;
@@ -42,7 +42,7 @@ public class ApiQuestionController {
 		try {
 			qnaService.deleteQuestion(questionId, UserSessionUtils.getUserFromSession(session));
 			return Result.ok();
-		} catch (CannotDeleteException e) {
+		} catch (CannotOperateException e) {
 			return Result.fail(e.getMessage());
 		}
 	}

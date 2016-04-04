@@ -2,25 +2,22 @@ package next.controller.qna;
 
 import javax.servlet.http.HttpSession;
 
-import next.CannotDeleteException;
-import next.controller.UserSessionUtils;
-import next.dao.AnswerDao;
-import next.dao.QuestionDao;
-import next.model.Question;
-import next.model.User;
-import next.service.QnaService;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import next.CannotOperateException;
+import next.controller.UserSessionUtils;
+import next.dao.QuestionDao;
+import next.model.Question;
+import next.service.QnaService;
+
 @Controller
 @RequestMapping("/questions")
 public class QuestionController {
 	private QuestionDao questionDao = QuestionDao.getInstance();
-	private AnswerDao answerDao = AnswerDao.getInstance();
 	private QnaService qnaService = QnaService.getInstance();
 
 	@RequestMapping(value = "/{questionId}", method = RequestMethod.GET)
@@ -43,7 +40,8 @@ public class QuestionController {
 		if (!UserSessionUtils.isLogined(session)) {
 			return "redirect:/users/loginForm";
 		}
-		questionDao.insert(question);
+		
+		questionDao.insert(question.newQuestion(UserSessionUtils.getUserFromSession(session)));
 		return "redirect:/";
 	}
 
@@ -54,7 +52,7 @@ public class QuestionController {
 		}
 		
 		Question question = qnaService.findById(questionId);
-		if (!question.isSameWriter(UserSessionUtils.getUserFromSession(session))) {
+		if (!question.isSameUser(UserSessionUtils.getUserFromSession(session))) {
 			throw new IllegalStateException("다른 사용자가 쓴 글을 수정할 수 없습니다.");
 		}
 		model.addAttribute("question", question);
@@ -67,7 +65,7 @@ public class QuestionController {
 			return "redirect:/users/loginForm";
 		}
 		
-		qnaService.update(editQuestion, loginUser);
+		qnaService.updateQuestion(editQuestion, UserSessionUtils.getUserFromSession(session));
 		return "redirect:/";
 	}
 
@@ -78,9 +76,9 @@ public class QuestionController {
 		}
 		
 		try {
-			qnaService.deleteQuestion(questionId, loginUser);
+			qnaService.deleteQuestion(questionId, UserSessionUtils.getUserFromSession(session));
 			return "redirect:/";
-		} catch (CannotDeleteException e) {
+		} catch (CannotOperateException e) {
 			model.addAttribute("question", qnaService.findById(questionId));
 			model.addAttribute("errorMessage", e.getMessage());
 			return "show.jsp";

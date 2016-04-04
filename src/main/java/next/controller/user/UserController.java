@@ -60,7 +60,7 @@ public class UserController {
         	throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
     	model.addAttribute("user", user);
-    	return "/user/form";
+    	return "/user/updateForm";
 	}
     
     @RequestMapping(value = "/{userId}", method = RequestMethod.PUT)

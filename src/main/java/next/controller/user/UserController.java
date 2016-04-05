@@ -40,7 +40,8 @@ public class UserController {
     }
     
     @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public String form() throws Exception {
+    public String form(Model model) throws Exception {
+    	model.addAttribute("user", new User());
     	return "/user/form";
     }
     

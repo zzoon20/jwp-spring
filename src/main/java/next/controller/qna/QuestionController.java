@@ -28,10 +28,11 @@ public class QuestionController {
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
-	public String createForm(@LoginUser User loginUser) throws Exception {
+	public String createForm(@LoginUser User loginUser, Model model) throws Exception {
 		if (loginUser.isGuestUser()) {
 			return "redirect:/users/loginForm";
 		}
+		model.addAttribute("question", new Question());
 		return "/qna/form";
 	}
 

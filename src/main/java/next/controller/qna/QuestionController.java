@@ -22,8 +22,8 @@ public class QuestionController {
 
 	@RequestMapping(value = "/{questionId}", method = RequestMethod.GET)
 	public String show(@PathVariable Long questionId, Model model) throws Exception {
-		Question question = qnaService.findById(questionId);
-		model.addAttribute("question", question);
+		model.addAttribute("question", qnaService.findById(questionId));
+		model.addAttribute("answers", qnaService.findAllByQuestionId(questionId));
 		return "/qna/show";
 	}
 

@@ -3,11 +3,13 @@ $(".answerWrite input[type=submit]").click(addAnswer);
 function addAnswer(e) {
   e.preventDefault();
 
-  var queryString = $("form[name=answer]").serialize();
+  var $answerForm = $("form[name=answer]");
+  var url = $answerForm.attr("action");
+  var queryString = $answerForm.serialize();
 
   $.ajax({
     type : 'post',
-    url : '/api/qna/addAnswer',
+    url : url,
     data : queryString,
     dataType : 'json',
     error: onError,
@@ -20,7 +22,7 @@ function onSuccess(json, status){
   if (result.status) {
 	  var answer = json.answer;
 	  var answerTemplate = $("#answerTemplate").html();
-	  var template = answerTemplate.format(answer.writer, new Date(answer.createdDate), answer.contents, answer.answerId, answer.answerId);
+	  var template = answerTemplate.format(answer.writer, new Date(answer.createdDate), answer.contents, answer.questionId, answer.answerId);
 	  $(".qna-comment-slipp-articles").prepend(template);	  
   } else {
 	  alert(result.message);
@@ -37,21 +39,21 @@ function deleteAnswer(e) {
   e.preventDefault();
 
   var deleteBtn = $(this);
-  var queryString = deleteBtn.closest("form").serialize();
-  console.log("qs : " + queryString);
+  var $deleteForm = deleteBtn.closest("form");
+  var url = $deleteForm.attr("action");
 
   $.ajax({
-    type: 'post',
-    url: "/api/qna/deleteAnswer",
-    data: queryString,
+    type: 'delete',
+    url: url,
     dataType: 'json',
     error: function (xhr, status) {
       alert("error");
     },
-    success: function (json, status) {
-      var result = json.result;
+    success: function (result, status) {
       if (result.status) {
         deleteBtn.closest('article').remove();
+      } else {
+    	alert(result.message);  
       }
     }
   });

@@ -31,7 +31,7 @@ public class ApiQuestionController {
 	
 	private QuestionDao questionDao = QuestionDao.getInstance();
 	private AnswerDao answerDao = AnswerDao.getInstance();
-	private QnaService qnaService = QnaService.getInstance();
+	private QnaService qnaService = new QnaService(questionDao, answerDao);
 	
 	@RequestMapping(value="/{questionId}", method=RequestMethod.DELETE)
 	public Result deleteQuestion(@LoginUser User loginUser, @PathVariable long questionId) throws Exception {

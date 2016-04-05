@@ -1,6 +1,7 @@
 package next.controller.qna;
 
 import next.CannotOperateException;
+import next.dao.AnswerDao;
 import next.dao.QuestionDao;
 import next.model.Question;
 import next.model.User;
@@ -18,7 +19,7 @@ import core.web.argumentresolver.LoginUser;
 @RequestMapping("/questions")
 public class QuestionController {
 	private QuestionDao questionDao = QuestionDao.getInstance();
-	private QnaService qnaService = QnaService.getInstance();
+	private QnaService qnaService = new QnaService(questionDao, AnswerDao.getInstance());
 
 	@RequestMapping(value = "/{questionId}", method = RequestMethod.GET)
 	public String show(@PathVariable long questionId, Model model) throws Exception {

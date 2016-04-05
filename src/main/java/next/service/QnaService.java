@@ -67,8 +67,8 @@ public class QnaService {
 		questionDao.delete(questionId);
 	}
 
-	public void updateQuestion(Question newQuestion, User user) throws CannotOperateException {
-		Question question = questionDao.findById(newQuestion.getQuestionId());
+	public void updateQuestion(long questionId, Question newQuestion, User user) throws CannotOperateException {
+		Question question = questionDao.findById(questionId);
         if (question == null) {
         	throw new EmptyResultDataAccessException("존재하지 않는 질문입니다.", 1);
         }

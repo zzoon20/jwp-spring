@@ -36,7 +36,7 @@ public class ApiQuestionController {
 	private QnaService qnaService = QnaService.getInstance();
 	
 	@RequestMapping(value="/{questionId}", method=RequestMethod.DELETE)
-	public Result deleteQuestion(HttpSession session, @PathVariable Long questionId) throws Exception {
+	public Result deleteQuestion(HttpSession session, @PathVariable long questionId) throws Exception {
 		if (!UserSessionUtils.isLogined(session)) {
 			return Result.fail("Login is required");
 		}
@@ -55,7 +55,7 @@ public class ApiQuestionController {
 	}
 	
 	@RequestMapping(value = "/{questionId}/answers", method = RequestMethod.POST)
-	public Map<String, Object> addAnswer(HttpSession session, @PathVariable Long questionId, String contents) throws Exception {
+	public Map<String, Object> addAnswer(HttpSession session, @PathVariable long questionId, String contents) throws Exception {
 		log.debug("questionId : {}, contents : {}", questionId, contents);
     	Map<String, Object> values = Maps.newHashMap();
 		if (!UserSessionUtils.isLogined(session)) {
@@ -74,7 +74,7 @@ public class ApiQuestionController {
 	}
 	
 	@RequestMapping(value = "/{questionId}/answers/{answerId}", method = RequestMethod.DELETE)
-	public Result deleteAnswer(HttpSession session, @PathVariable Long answerId) throws Exception {
+	public Result deleteAnswer(HttpSession session, @PathVariable long answerId) throws Exception {
 		if (!UserSessionUtils.isLogined(session)) {
 			return Result.fail("Login is required");
 		}

@@ -21,7 +21,7 @@ public class QuestionController {
 	private QnaService qnaService = QnaService.getInstance();
 
 	@RequestMapping(value = "/{questionId}", method = RequestMethod.GET)
-	public String show(@PathVariable Long questionId, Model model) throws Exception {
+	public String show(@PathVariable long questionId, Model model) throws Exception {
 		model.addAttribute("question", qnaService.findById(questionId));
 		model.addAttribute("answers", qnaService.findAllByQuestionId(questionId));
 		return "/qna/show";
@@ -46,7 +46,7 @@ public class QuestionController {
 	}
 
 	@RequestMapping(value = "/{questionId}/edit", method = RequestMethod.GET)
-	public String editForm(HttpSession session, @PathVariable Long questionId, Model model) throws Exception {
+	public String editForm(HttpSession session, @PathVariable long questionId, Model model) throws Exception {
 		if (!UserSessionUtils.isLogined(session)) {
 			return "redirect:/users/loginForm";
 		}
@@ -56,21 +56,21 @@ public class QuestionController {
 			throw new IllegalStateException("다른 사용자가 쓴 글을 수정할 수 없습니다.");
 		}
 		model.addAttribute("question", question);
-		return "/qna/update.jsp";
+		return "/qna/update";
 	}
 
 	@RequestMapping(value = "/{questionId}", method = RequestMethod.PUT)
-	public String edit(HttpSession session, @PathVariable Long questionId, Question editQuestion) throws Exception {
+	public String edit(HttpSession session, @PathVariable long questionId, Question editQuestion) throws Exception {
 		if (!UserSessionUtils.isLogined(session)) {
 			return "redirect:/users/loginForm";
 		}
 		
-		qnaService.updateQuestion(editQuestion, UserSessionUtils.getUserFromSession(session));
+		qnaService.updateQuestion(questionId, editQuestion, UserSessionUtils.getUserFromSession(session));
 		return "redirect:/";
 	}
 
 	@RequestMapping(value = "/{questionId}", method = RequestMethod.DELETE)
-	public String delete(HttpSession session, @PathVariable Long questionId, Model model) throws Exception {
+	public String delete(HttpSession session, @PathVariable long questionId, Model model) throws Exception {
 		if (!UserSessionUtils.isLogined(session)) {
 			return "redirect:/users/loginForm";
 		}
@@ -81,7 +81,7 @@ public class QuestionController {
 		} catch (CannotOperateException e) {
 			model.addAttribute("question", qnaService.findById(questionId));
 			model.addAttribute("errorMessage", e.getMessage());
-			return "show.jsp";
+			return "show";
 		}
 	}
 }

@@ -1,6 +1,10 @@
 package next.controller.qna;
 
-import javax.servlet.http.HttpSession;
+import next.CannotOperateException;
+import next.dao.QuestionDao;
+import next.model.Question;
+import next.model.User;
+import next.service.QnaService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,11 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import next.CannotOperateException;
-import next.controller.UserSessionUtils;
-import next.dao.QuestionDao;
-import next.model.Question;
-import next.service.QnaService;
+import core.web.argumentresolver.LoginUser;
 
 @Controller
 @RequestMapping("/questions")
@@ -28,31 +28,26 @@ public class QuestionController {
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
-	public String createForm(HttpSession session) throws Exception {
-		if (!UserSessionUtils.isLogined(session)) {
+	public String createForm(@LoginUser User loginUser) throws Exception {
+		if (loginUser.isGuestUser()) {
 			return "redirect:/users/loginForm";
 		}
 		return "/qna/form";
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.POST)
-	public String create(HttpSession session, Question question) throws Exception {
-		if (!UserSessionUtils.isLogined(session)) {
+	public String create(@LoginUser User loginUser, Question question) throws Exception {
+		if (loginUser.isGuestUser()) {
 			return "redirect:/users/loginForm";
 		}
-		
-		questionDao.insert(question.newQuestion(UserSessionUtils.getUserFromSession(session)));
+		questionDao.insert(question.newQuestion(loginUser));
 		return "redirect:/";
 	}
 
 	@RequestMapping(value = "/{questionId}/edit", method = RequestMethod.GET)
-	public String editForm(HttpSession session, @PathVariable long questionId, Model model) throws Exception {
-		if (!UserSessionUtils.isLogined(session)) {
-			return "redirect:/users/loginForm";
-		}
-		
+	public String editForm(@LoginUser User loginUser, @PathVariable long questionId, Model model) throws Exception {
 		Question question = qnaService.findById(questionId);
-		if (!question.isSameUser(UserSessionUtils.getUserFromSession(session))) {
+		if (!question.isSameUser(loginUser)) {
 			throw new IllegalStateException("다른 사용자가 쓴 글을 수정할 수 없습니다.");
 		}
 		model.addAttribute("question", question);
@@ -60,23 +55,15 @@ public class QuestionController {
 	}
 
 	@RequestMapping(value = "/{questionId}", method = RequestMethod.PUT)
-	public String edit(HttpSession session, @PathVariable long questionId, Question editQuestion) throws Exception {
-		if (!UserSessionUtils.isLogined(session)) {
-			return "redirect:/users/loginForm";
-		}
-		
-		qnaService.updateQuestion(questionId, editQuestion, UserSessionUtils.getUserFromSession(session));
+	public String edit(@LoginUser User loginUser, @PathVariable long questionId, Question editQuestion) throws Exception {
+		qnaService.updateQuestion(questionId, editQuestion, loginUser);
 		return "redirect:/";
 	}
 
 	@RequestMapping(value = "/{questionId}", method = RequestMethod.DELETE)
-	public String delete(HttpSession session, @PathVariable long questionId, Model model) throws Exception {
-		if (!UserSessionUtils.isLogined(session)) {
-			return "redirect:/users/loginForm";
-		}
-		
+	public String delete(@LoginUser User loginUser, @PathVariable long questionId, Model model) throws Exception {
 		try {
-			qnaService.deleteQuestion(questionId, UserSessionUtils.getUserFromSession(session));
+			qnaService.deleteQuestion(questionId, loginUser);
 			return "redirect:/";
 		} catch (CannotOperateException e) {
 			model.addAttribute("question", qnaService.findById(questionId));

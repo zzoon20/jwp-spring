@@ -1,6 +1,8 @@
 package next.model;
 
 public class User {
+	public static final GuestUser GUEST_USER = new GuestUser();
+	
 	private String userId;
 	private String password;
 	private String name;
@@ -68,6 +70,17 @@ public class User {
 
 	public boolean isSameUser(String newUserId) {
 		return userId.equals(newUserId);
+	}
+	
+	public boolean isGuestUser() {
+		return false;
+	}
+	
+	private static class GuestUser extends User {
+		@Override
+		public boolean isGuestUser() {
+			return true;
+		}
 	}
 
 	@Override

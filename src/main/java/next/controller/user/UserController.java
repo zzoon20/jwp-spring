@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import core.web.argumentresolver.LoginUser;
+
 @Controller
 @RequestMapping("/users")
 public class UserController {
@@ -22,8 +24,8 @@ public class UserController {
 	private UserDao userDao = UserDao.getInstance();
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
-    public String index(HttpSession session, Model model) throws Exception {
-		if (!UserSessionUtils.isLogined(session)) {
+    public String index(@LoginUser User loginUser, Model model) throws Exception {
+		if (loginUser.isGuestUser()) {
 			return "redirect:/users/loginForm";
 		}
 		
@@ -50,13 +52,9 @@ public class UserController {
 	}
     
     @RequestMapping(value = "/{userId}/edit", method = RequestMethod.GET)
-	public String updateForm(HttpSession session, @PathVariable String userId, Model model) throws Exception {
-    	if (!UserSessionUtils.isLogined(session)) {
-			return "redirect:/users/loginForm";
-		}
-    	
+	public String updateForm(@LoginUser User loginUser, @PathVariable String userId, Model model) throws Exception {
     	User user = userDao.findByUserId(userId);
-    	if (!UserSessionUtils.getUserFromSession(session).isSameUser(user)) {
+    	if (!loginUser.isSameUser(user)) {
         	throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
     	model.addAttribute("user", user);
@@ -64,13 +62,9 @@ public class UserController {
 	}
     
     @RequestMapping(value = "/{userId}", method = RequestMethod.PUT)
-	public String update(HttpSession session, @PathVariable String userId, User newUser) throws Exception {
-    	if (!UserSessionUtils.isLogined(session)) {
-			return "redirect:/users/loginForm";
-		}
-    	
+	public String update(@LoginUser User loginUser, @PathVariable String userId, User newUser) throws Exception {
     	User user = userDao.findByUserId(userId);
-    	if (!UserSessionUtils.getUserFromSession(session).isSameUser(user)) {
+    	if (!loginUser.isSameUser(user)) {
         	throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
         

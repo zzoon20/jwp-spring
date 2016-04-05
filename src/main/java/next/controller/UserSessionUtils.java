@@ -2,6 +2,8 @@ package next.controller;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.web.context.request.WebRequest;
+
 import next.model.User;
 
 public class UserSessionUtils {
@@ -14,6 +16,14 @@ public class UserSessionUtils {
 		}
 		return (User)user;
 	}
+	
+	public static User getUser(WebRequest webRequest) {
+		Object user = webRequest.getAttribute(USER_SESSION_KEY, WebRequest.SCOPE_SESSION);
+		if (user == null) {
+			return User.GUEST_USER;
+		}
+		return (User)user;
+	}	
 	
 	public static boolean isLogined(HttpSession session) {
 		if (getUserFromSession(session) == null) {

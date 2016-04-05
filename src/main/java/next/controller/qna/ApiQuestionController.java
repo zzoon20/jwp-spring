@@ -3,10 +3,7 @@ package next.controller.qna;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
 import next.CannotOperateException;
-import next.controller.UserSessionUtils;
 import next.dao.AnswerDao;
 import next.dao.QuestionDao;
 import next.model.Answer;
@@ -25,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.collect.Maps;
 
 import core.jdbc.DataAccessException;
+import core.web.argumentresolver.LoginUser;
 
 @RestController
 @RequestMapping("/api/questions")
@@ -36,13 +34,9 @@ public class ApiQuestionController {
 	private QnaService qnaService = QnaService.getInstance();
 	
 	@RequestMapping(value="/{questionId}", method=RequestMethod.DELETE)
-	public Result deleteQuestion(HttpSession session, @PathVariable long questionId) throws Exception {
-		if (!UserSessionUtils.isLogined(session)) {
-			return Result.fail("Login is required");
-		}
-		
+	public Result deleteQuestion(@LoginUser User loginUser, @PathVariable long questionId) throws Exception {
 		try {
-			qnaService.deleteQuestion(questionId, UserSessionUtils.getUserFromSession(session));
+			qnaService.deleteQuestion(questionId, loginUser);
 			return Result.ok();
 		} catch (CannotOperateException e) {
 			return Result.fail(e.getMessage());
@@ -55,15 +49,9 @@ public class ApiQuestionController {
 	}
 	
 	@RequestMapping(value = "/{questionId}/answers", method = RequestMethod.POST)
-	public Map<String, Object> addAnswer(HttpSession session, @PathVariable long questionId, String contents) throws Exception {
+	public Map<String, Object> addAnswer(@LoginUser User loginUser, @PathVariable long questionId, String contents) throws Exception {
 		log.debug("questionId : {}, contents : {}", questionId, contents);
     	Map<String, Object> values = Maps.newHashMap();
-		if (!UserSessionUtils.isLogined(session)) {
-			values.put("result", Result.fail("Login is required"));
-			return values;
-		}
-    	
-    	User loginUser = UserSessionUtils.getUserFromSession(session);
     	Answer answer = new Answer(loginUser.getUserId(), contents, questionId);
     	Answer savedAnswer = answerDao.insert(answer);
 		questionDao.updateCountOfAnswer(savedAnswer.getQuestionId());
@@ -74,13 +62,9 @@ public class ApiQuestionController {
 	}
 	
 	@RequestMapping(value = "/{questionId}/answers/{answerId}", method = RequestMethod.DELETE)
-	public Result deleteAnswer(HttpSession session, @PathVariable long answerId) throws Exception {
-		if (!UserSessionUtils.isLogined(session)) {
-			return Result.fail("Login is required");
-		}
-		
+	public Result deleteAnswer(@LoginUser User loginUser, @PathVariable long answerId) throws Exception {
 		Answer answer = answerDao.findById(answerId);
-		if (!answer.isSameUser(UserSessionUtils.getUserFromSession(session))) {
+		if (!answer.isSameUser(loginUser)) {
 			return Result.fail("다른 사용자가 쓴 글을 삭제할 수 없습니다.");
 		}
 		

@@ -50,6 +50,9 @@ public class Answer {
 	}
 	
 	public boolean isSameUser(User user) {
+		if (user == null) {
+			return false;
+		}
 		return user.isSameUser(this.writer);
 	}
 	

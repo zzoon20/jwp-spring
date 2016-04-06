@@ -69,6 +69,9 @@ public class User {
 	}
 
 	public boolean isSameUser(String newUserId) {
+		if (userId == null) {
+			return false;
+		}
 		return userId.equals(newUserId);
 	}
 	

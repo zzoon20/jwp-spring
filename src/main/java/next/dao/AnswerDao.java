@@ -8,23 +8,19 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import next.model.Answer;
-import core.jdbc.JdbcTemplate;
-import core.jdbc.KeyHolder;
-import core.jdbc.PreparedStatementCreator;
-import core.jdbc.RowMapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class AnswerDao {
-	private static AnswerDao answerDao;
-	private JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
-	
-	private AnswerDao() {}
-	
-	public static AnswerDao getInstance() {
-		if (answerDao == null) {
-			answerDao = new AnswerDao();
-		}
-		return answerDao;
-	}
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 	
     public Answer insert(Answer answer) {
         String sql = "INSERT INTO ANSWERS (writer, contents, createdDate, questionId) VALUES (?, ?, ?, ?)";
@@ -40,9 +36,9 @@ public class AnswerDao {
 			}
 		};
         
-		KeyHolder keyHolder = new KeyHolder();
+		KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(psc, keyHolder);
-        return findById(keyHolder.getId());
+        return findById(keyHolder.getKey().longValue());
     }
 
     public Answer findById(long answerId) {
@@ -50,9 +46,12 @@ public class AnswerDao {
 
         RowMapper<Answer> rm = new RowMapper<Answer>() {
             @Override
-            public Answer mapRow(ResultSet rs) throws SQLException {
-                return new Answer(rs.getLong("answerId"), rs.getString("writer"), rs.getString("contents"),
-                        rs.getTimestamp("createdDate"), rs.getLong("questionId"));
+            public Answer mapRow(ResultSet rs, int index) throws SQLException {
+                return new Answer(rs.getLong("answerId"), 
+                		rs.getString("writer"), 
+                		rs.getString("contents"),
+                        rs.getTimestamp("createdDate"), 
+                        rs.getLong("questionId"));
             }
         };
 
@@ -65,9 +64,12 @@ public class AnswerDao {
 
         RowMapper<Answer> rm = new RowMapper<Answer>() {
             @Override
-            public Answer mapRow(ResultSet rs) throws SQLException {
-                return new Answer(rs.getLong("answerId"), rs.getString("writer"), rs.getString("contents"),
-                        rs.getTimestamp("createdDate"), questionId);
+            public Answer mapRow(ResultSet rs, int index) throws SQLException {
+                return new Answer(rs.getLong("answerId"), 
+                		rs.getString("writer"), 
+                		rs.getString("contents"),
+                        rs.getTimestamp("createdDate"), 
+                        questionId);
             }
         };
 

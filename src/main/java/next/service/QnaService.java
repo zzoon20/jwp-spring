@@ -2,6 +2,8 @@ package next.service;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import next.CannotOperateException;
 import next.dao.AnswerDao;
 import next.dao.QuestionDao;
@@ -10,11 +12,14 @@ import next.model.Question;
 import next.model.User;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class QnaService {
 	private QuestionDao questionDao;
 	private AnswerDao answerDao;
 
+	@Inject
 	public QnaService(QuestionDao questionDao, AnswerDao answerDao) {
 		this.questionDao = questionDao;
 		this.answerDao = answerDao;

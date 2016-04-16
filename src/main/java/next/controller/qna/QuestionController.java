@@ -70,7 +70,7 @@ public class QuestionController {
 		} catch (CannotOperateException e) {
 			model.addAttribute("question", qnaService.findById(questionId));
 			model.addAttribute("errorMessage", e.getMessage());
-			return "show";
+			return "/qna/show";
 		}
 	}
 }

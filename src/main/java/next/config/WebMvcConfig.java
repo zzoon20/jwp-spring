@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -18,7 +20,10 @@ import core.web.argumentresolver.LoginUserHandlerMethodArgumentResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = { "next.controller" })
+@ComponentScan(
+	basePackages = { "next.controller" },
+	includeFilters = @ComponentScan.Filter(value = Controller.class, type = FilterType.ANNOTATION)
+)
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
     private static final int CACHE_PERIOD = 31556926; // one year
     

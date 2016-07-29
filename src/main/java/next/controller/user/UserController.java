@@ -20,12 +20,17 @@ public class UserController {
     @RequestMapping(value="/users", method=RequestMethod.GET)
     public ModelAndView listUser(HttpSession session) throws Exception {
     	if (!UserSessionUtils.isLogined(session)) {
-			return new ModelAndView("redirect:/users/loginForm");
+			return new ModelAndView("redirect:users/loginForm");
 		}
     	
-        ModelAndView mav = new ModelAndView("/user/list.jsp");
+        ModelAndView mav = new ModelAndView("user/list");
         mav.addObject("users", userDao.findAll());
         return mav;
+    }
+
+    @RequestMapping(value="/users/loginForm", method=RequestMethod.GET)
+    public ModelAndView loginForm() throws Exception {
+    	return new ModelAndView("user/login");
     }
     
 }

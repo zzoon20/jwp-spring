@@ -10,7 +10,9 @@ import next.model.Question;
 import next.model.User;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class QnaService {
 	private QuestionDao questionDao;
 	private AnswerDao answerDao;

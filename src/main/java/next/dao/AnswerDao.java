@@ -7,12 +7,15 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import next.model.Answer;
 import core.jdbc.JdbcTemplate;
 import core.jdbc.KeyHolder;
 import core.jdbc.PreparedStatementCreator;
 import core.jdbc.RowMapper;
 
+@Repository
 public class AnswerDao {
 	private static AnswerDao answerDao;
 	private JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();

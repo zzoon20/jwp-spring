@@ -4,10 +4,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import next.model.User;
 import core.jdbc.JdbcTemplate;
 import core.jdbc.RowMapper;
 
+@Repository
 public class UserDao {
 	private static UserDao userDao;
 	private JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();

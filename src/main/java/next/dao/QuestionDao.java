@@ -8,17 +8,18 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import core.jdbc.JdbcTemplate;
-import core.jdbc.KeyHolder;
-import core.jdbc.PreparedStatementCreator;
-import core.jdbc.RowMapper;
 import next.model.Question;
 
 @Repository
 public class QuestionDao {
-	private JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
+	@Autowired
+	private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 	
     public Question insert(Question question) {
         String sql = "INSERT INTO QUESTIONS (writer, title, contents, createdDate) VALUES (?, ?, ?, ?)";
@@ -34,9 +35,9 @@ public class QuestionDao {
 			}
 		};
         
-		KeyHolder keyHolder = new KeyHolder();
+		KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(psc, keyHolder);
-        return findById(keyHolder.getId());
+        return findById(keyHolder.getKey().longValue());
     }
 	
 	public List<Question> findAll() {
@@ -45,13 +46,12 @@ public class QuestionDao {
 		
 		RowMapper<Question> rm = new RowMapper<Question>() {
 			@Override
-			public Question mapRow(ResultSet rs) throws SQLException {
+			public Question mapRow(ResultSet rs, int rowNum) throws SQLException {
 				return new Question(rs.getLong("questionId"),
 						rs.getString("writer"), rs.getString("title"), null,
 						rs.getTimestamp("createdDate"),
 						rs.getInt("countOfAnswer"));
 			}
-			
 		};
 		
 		return jdbcTemplate.query(sql, rm);
@@ -63,7 +63,7 @@ public class QuestionDao {
 		
 		RowMapper<Question> rm = new RowMapper<Question>() {
 			@Override
-			public Question mapRow(ResultSet rs) throws SQLException {
+			public Question mapRow(ResultSet rs, int rowNum) throws SQLException {
 				return new Question(rs.getLong("questionId"),
 						rs.getString("writer"), rs.getString("title"),
 						rs.getString("contents"),

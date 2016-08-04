@@ -9,14 +9,18 @@ import next.model.Answer;
 import next.model.Question;
 import next.model.User;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 @Service
 public class QnaService {
+	@Autowired
 	private QuestionDao questionDao;
+	@Autowired
 	private AnswerDao answerDao;
 
+	@Autowired
 	public QnaService(QuestionDao questionDao, AnswerDao answerDao) {
 		this.questionDao = questionDao;
 		this.answerDao = answerDao;

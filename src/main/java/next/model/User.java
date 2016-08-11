@@ -1,11 +1,22 @@
 package next.model;
 
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+
 public class User {
 	public static final GuestUser GUEST_USER = new GuestUser();
 	
+	@Size(min=4, max=12)
 	private String userId;
+
+	@Size(min=8, max=12)
 	private String password;
+
+	@Size(min=4, max=12)
 	private String name;
+	
+	@Email
 	private String email;
 
 	public User() {

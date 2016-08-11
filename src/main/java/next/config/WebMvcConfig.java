@@ -2,10 +2,12 @@ package next.config;
 
 import java.util.List;
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.ViewResolver;
@@ -34,6 +36,15 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         bean.setPrefix("/WEB-INF/jsp/");
         bean.setSuffix(".jsp");
         return bean;
+    }
+    
+    @Bean
+    public MessageSource messageSource() {
+    	ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+    	messageSource.setBasename("classpath:messages");
+    	messageSource.setDefaultEncoding("UTF-8");
+    	messageSource.setCacheSeconds(10);
+    	return messageSource;
     }
     
     @Override
